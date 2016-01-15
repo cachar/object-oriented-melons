@@ -1,3 +1,5 @@
+from random import randint
+
 class AbstractMelonOrder(object):
     """Abstract class to handle domestic and international orders."""
 
@@ -9,20 +11,21 @@ class AbstractMelonOrder(object):
         self.shipped = False
         self.tax = tax
         self.order_type = order_type
+        self.base_price = randint(5, 9)
+
 
     def get_total(self):
         """Calculate price."""
 
         flat_fee = 3
-        base_price = 5
         total = 0
 
         # To increase price for Christmas melons:
         if self.species == "christmas" or self.species == "Christmas":
-            base_price *= 1.5
+            self.base_price *= 1.5
 
 
-        total = (1 + self.tax) * self.qty * base_price            
+        total = (1 + self.tax) * self.qty * self.get_base_price()            
 
         # To add flat fee: 
         if self.order_type == "international" and self.qty < 10:
@@ -35,14 +38,32 @@ class AbstractMelonOrder(object):
 
         self.shipped = True
 
+
+    def get_base_price(self):
+        """Docstring"""
+
+        return self.base_price
+
+
 class GovernmentMelonOrder(AbstractMelonOrder):
     """A concrete subclass of AbstractMelonOrder that handles
     US government order."""
 
-    pass
-    # self.tax = 0
-    # self.passed_inspection = False
-    # def inspection(self)
+    
+
+    def __init__(self, species, qty):
+        """ Initializing the government order attributes."""
+
+        self.passed_inspection = False
+        return super(GovernmentMelonOrder, self).__init__(species, qty, "government", 0)
+
+
+    def inspect_melons(self, passed):
+        """Takes a Boolean value as an argument for whether or not the inspection passed.
+        If it passed, updates the passed_inspection instance attribute."""
+
+        self.passed_inspection = passed
+
 
 
 
